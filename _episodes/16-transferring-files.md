@@ -448,7 +448,7 @@ Hit "Quickconnect" to connect. You should see your remote files appear on the
 right hand side of the screen. You can drag-and-drop files between the left
 (local) and right (remote) sides of the screen to transfer files.
 
-{% include {{ site.snippets }}/filezilla-remote-instructions.snip %}
+{% include {{ site.snippets }}/transferring-files/filezilla-ssh-tunnel-instructions.snip %}
 
 Finally, if you need to move large files (typically larger than a gigabyte)
 from one remote computer to another remote computer, SSH in to the computer
