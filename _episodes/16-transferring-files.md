@@ -340,9 +340,8 @@ If your home directory _is_ the destination, you can leave the destination
 field blank, or type `~` -- the shorthand for your home directory -- for
 completeness.
 
-With `scp`, directories can be uploaded using the `-r` option. A trailing
-slash on a source directory is optional, and has no effect. It is important
-for other commands, like `rsync`.
+With `scp`, a trailing slash on the target directory is optional, and has no effect.
+A trailing slash on a source directory is important for other commands, like `rsync`.
 
 > ## A Note on `rsync`
 >
