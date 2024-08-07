@@ -56,8 +56,10 @@ your local machine, using the URL of the current codebase:
 > > ```
 > > {{ site.local.prompt }} wget -O amdahl.tar.gz https://github.com/hpc-carpentry/amdahl/tarball/main
 > > # or
-> > {{ site.local.prompt }} curl -o amdahl.tar.gz https://github.com/hpc-carpentry/amdahl/tarball/main
+> > {{ site.local.prompt }} curl -o amdahl.tar.gz -L https://github.com/hpc-carpentry/amdahl/tarball/main
 > > ```
+> >
+> > The `-L` option to `curl` tells it to follow URL redirects (which `wget` does by default).
 > > {: .language-bash}
 > {: .solution}
 {: .challenge}
