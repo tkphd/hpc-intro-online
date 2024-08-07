@@ -60,6 +60,7 @@ your local machine, using the URL of the current codebase:
 > > ```
 > >
 > > The `-L` option to `curl` tells it to follow URL redirects (which `wget` does by default).
+> > 
 > > {: .language-bash}
 > {: .solution}
 {: .challenge}
