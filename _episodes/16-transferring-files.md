@@ -58,10 +58,8 @@ your local machine, using the URL of the current codebase:
 > > # or
 > > {{ site.local.prompt }} curl -o amdahl.tar.gz -L https://github.com/hpc-carpentry/amdahl/tarball/main
 > > ```
-> >
-> > The `-L` option to `curl` tells it to follow URL redirects (which `wget` does by default).
-> >
 > > {: .language-bash}
+> > The `-L` option to `curl` tells it to follow URL redirects (which `wget` does by default).
 > {: .solution}
 {: .challenge}
 
