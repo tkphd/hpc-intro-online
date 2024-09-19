@@ -56,7 +56,20 @@ use `{{ site.sched.hist }}` to get statistics about `parallel-job.sh`.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/resources/account-history.snip %}
+```
+       JobID    JobName  Partition    Account  AllocCPUS      State ExitCode
+------------ ---------- ---------- ---------- ---------- ---------- --------
+7               file.sh cpubase_b+ def-spons+          1  COMPLETED      0:0
+7.batch           batch            def-spons+          1  COMPLETED      0:0
+7.extern         extern            def-spons+          1  COMPLETED      0:0
+8               file.sh cpubase_b+ def-spons+          1  COMPLETED      0:0
+8.batch           batch            def-spons+          1  COMPLETED      0:0
+8.extern         extern            def-spons+          1  COMPLETED      0:0
+9            example-j+ cpubase_b+ def-spons+          1  COMPLETED      0:0
+9.batch           batch            def-spons+          1  COMPLETED      0:0
+9.extern         extern            def-spons+          1  COMPLETED      0:0
+```
+{: .output}
 
 This shows all the jobs we ran today (note that there are multiple entries per
 job).

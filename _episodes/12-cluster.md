@@ -159,7 +159,13 @@ For example, we can view all of the compute nodes by running the command
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/cluster/queue-info.snip %}
+```
+PARTITION          AVAIL  TIMELIMIT  NODES  STATE NODELIST
+cpubase_bycore_b1*    up   infinite      4   idle node[1-2],smnode[1-2]
+node                  up   infinite      2   idle node[1-2]
+smnode                up   infinite      2   idle smnode[1-2]
+```
+{: .output}
 
 A lot of the nodes are busy running work for other users: we are not alone
 here!
@@ -276,7 +282,17 @@ connect to a shared, remote fileserver or cluster of servers.
 > {: .solution}
 {: .challenge}
 
-{% include {{ site.snippets }}/cluster/specific-node-info.snip %}
+> ## Explore a Worker Node
+>
+> Finally, let's look at the resources available on the worker nodes where your
+> jobs will actually run. Try running this command to see the name, CPUs and
+> memory available on the worker nodes:
+>
+> ```
+> {{ site.remote.prompt }} sinfo -o "%n %c %m" | column -t
+> ```
+> {: .language-bash}
+{: .challenge}
 
 > ## Compare Your Computer, the Login Node and the Compute Node
 >

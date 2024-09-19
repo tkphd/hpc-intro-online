@@ -31,17 +31,16 @@ so by changing their values
 you can change how the shell behaves (and with a little more effort how other
 programs behave).
 
-Variables
-are a great way of saving information under a name you can access later. In
-programming languages like Python and R, variables can store pretty much
-anything you can think of. In the shell, they usually just store text. The best
-way to understand how they work is to see them in action.
+Variables are a great way of saving information under a name you can access
+later. In programming languages like Python and R, variables can store pretty
+much anything you can think of. In the shell, they usually just store text. The
+best way to understand how they work is to see them in action.
 
 Let's start by running the command `set` and looking at some of the variables
 in a typical shell session:
 
 ~~~
-$ set
+set
 ~~~
 {: .language-bash}
 
@@ -78,7 +77,7 @@ string to an integer.
 Let's show the value of the variable `HOME`:
 
 ~~~
-$ echo HOME
+echo HOME
 ~~~
 {: .language-bash}
 
@@ -92,7 +91,7 @@ That just prints "HOME", which isn't what we wanted
 Let's try this instead:
 
 ~~~
-$ echo $HOME
+echo $HOME
 ~~~
 {: .language-bash}
 
@@ -115,8 +114,8 @@ Creating a variable is easy — we just assign a value to a name using "="
 around the `=`!):
 
 ~~~
-$ SECRET_IDENTITY=Dracula
-$ echo $SECRET_IDENTITY
+SECRET_IDENTITY=Dracula
+echo $SECRET_IDENTITY
 ~~~
 {: .language-bash}
 
@@ -128,8 +127,8 @@ Dracula
 To change the value, just assign a new one:
 
 ~~~
-$ SECRET_IDENTITY=Camilla
-$ echo $SECRET_IDENTITY
+SECRET_IDENTITY=Camilla
+echo $SECRET_IDENTITY
 ~~~
 {: .language-bash}
 
@@ -151,15 +150,15 @@ example, to make our `SECRET_IDENTITY` available to other programs that we call
 from our shell we can do:
 
 ~~~
-$ SECRET_IDENTITY=Camilla
-$ export SECRET_IDENTITY
+SECRET_IDENTITY=Camilla
+export SECRET_IDENTITY
 ~~~
 {: .language-bash}
 
 You can also create and export the variable in a single step:
 
 ~~~
-$ export SECRET_IDENTITY=Camilla
+export SECRET_IDENTITY=Camilla
 ~~~
 {: .language-bash}
 
@@ -188,13 +187,42 @@ session with the command `env` (which returns a subset of what the command
 your _runtime environment_ and can affect the behaviour of the programs you
 run**.
 
-{% include {{ site.snippets }}/scheduler/print-sched-variables.snip %}
+> ## Job environment variables
+>
+> When {{ site.sched.name }} runs a job, it sets a number of environment
+> variables for the job. One of these will let us check what directory our job
+> script was submitted from. The `SLURM_SUBMIT_DIR` variable is set to the
+> directory from which our job was submitted. Using the `SLURM_SUBMIT_DIR`
+> variable, modify your job so that it prints out the location from which the
+> job was submitted.
+>
+> > ## Solution
+> >
+> > ```
+> > {{ site.remote.prompt }} nano example-job.sh
+> > {{ site.remote.prompt }} cat example-job.sh
+> > ```
+> > {: .language-bash}
+> >
+> > ```
+> > {{ site.remote.bash_shebang }}
+> > #SBATCH -t 00:00:30
+> >
+> > echo -n "This script is running on "
+> > hostname
+> >
+> > echo "This job was launched in the following directory:"
+> > echo ${SLURM_SUBMIT_DIR}
+> > ```
+> > {: .output}
+> {: .solution}
+{: .challenge}
 
 To remove a variable or environment variable you can use the `unset` command,
 for example:
 
 ~~~
-$ unset SECRET_IDENTITY
+unset SECRET_IDENTITY
 ~~~
 {: .language-bash}
 
