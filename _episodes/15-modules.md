@@ -76,7 +76,27 @@ To see available software modules, use `module avail`:
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/modules/available-modules.snip %}
+```
+~~~ /cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/modules/all ~~~
+  Bazel/3.6.0-GCCcore-x.y.z              NSS/3.51-GCCcore-x.y.z
+  Bison/3.5.3-GCCcore-x.y.z              Ninja/1.10.0-GCCcore-x.y.z
+  Boost/1.72.0-gompi-2020a               OSU-Micro-Benchmarks/5.6.3-gompi-2020a
+  CGAL/4.14.3-gompi-2020a-Python-3.x.y   OpenBLAS/0.3.9-GCC-x.y.z
+  CMake/3.16.4-GCCcore-x.y.z             OpenFOAM/v2006-foss-2020a
+
+[removed most of the output here for clarity]
+
+  Where:
+   L:        Module is loaded
+   Aliases:  Aliases exist: foo/1.2.3 (1.2) means that "module load foo/1.2"
+             will load foo/1.2.3
+   D:        Default Module
+
+Use "module spider" to find all possible modules and extensions.
+Use "module keyword key1 key2 ..." to search for all possible modules matching
+any of the "keys".
+```
+{: .output}
 
 ### Listing Currently Loaded Modules
 
@@ -89,7 +109,10 @@ message telling you so
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/modules/default-modules.snip %}
+```
+No Modulefiles Currently Loaded.
+```
+{: .output}
 
 ## Loading and Unloading Software
 
@@ -105,13 +128,52 @@ it to tell us where a particular piece of software is stored.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/modules/missing-python.snip %}
+If the `python3` command was unavailable, we would see output like
+
+```
+/usr/bin/which: no python3 in (/cvmfs/pilot.eessi-hpc.org/2020.12/compat/linux/x86_64/usr/bin:/opt/software/slurm/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/{{site.remote.user}}/.local/bin:/home/{{site.remote.user}}/bin)
+```
+{: .output}
+
+Note that this wall of text is really a list, with values separated
+by the `:` character. The output is telling us that the `which` command
+searched the following directories for `python3`, without success:
+
+```
+/cvmfs/pilot.eessi-hpc.org/2020.12/compat/linux/x86_64/usr/bin
+/opt/software/slurm/bin
+/usr/local/bin
+/usr/bin
+/usr/local/sbin
+/usr/sbin
+/opt/puppetlabs/bin
+/home/{{site.remote.user}}/.local/bin
+/home/{{site.remote.user}}/bin
+```
+{: .output}
+
+However, in our case we do have an existing `python3` available so we see
+
+```
+/cvmfs/pilot.eessi-hpc.org/2020.12/compat/linux/x86_64/usr/bin/python3
+```
+{: .output}
+
+We need a different Python than the system provided one though, so let us load
+a module to access it.
 
 We can load the `python3` command with `module load`:
 
-{% include {{ site.snippets }}/modules/module-load-python.snip %}
+```
+{{ site.remote.prompt }} module load {{ site.remote.module_python3 }}
+{{ site.remote.prompt }} which python3
+```
+{: .language-bash}
 
-{% include {{ site.snippets }}/modules/python-executable-dir.snip %}
+```
+/cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/Python/3.x.y-GCCcore-x.y.z/bin/python3
+```
+{: .output}
 
 So, what just happened?
 
@@ -127,23 +189,130 @@ variables we can print it out using `echo`.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/modules/python-module-path.snip %}
+```
+/cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/Python/3.x.y-GCCcore-x.y.z/bin:/cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/SQLite/3.31.1-GCCcore-x.y.z/bin:/cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/Tcl/8.6.10-GCCcore-x.y.z/bin:/cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/GCCcore/x.y.z/bin:/cvmfs/pilot.eessi-hpc.org/2020.12/compat/linux/x86_64/usr/bin:/opt/software/slurm/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/home/user01/.local/bin:/home/user01/bin
+```
+{: .output}
 
 You'll notice a similarity to the output of the `which` command. In this case,
 there's only one difference: the different directory at the beginning. When we
 ran the `module load` command, it added a directory to the beginning of our
 `$PATH`. Let's examine what's there:
 
-{% include {{ site.snippets }}/modules/python-ls-dir-command.snip %}
+```
+{{ site.remote.prompt }} ls /cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/software/Python/3.x.y-GCCcore-x.y.z/bin
+```
+{: .language-bash}
 
-{% include {{ site.snippets }}/modules/python-ls-dir-output.snip %}
+```
+2to3              nosetests-3.8  python                 rst2s5.py
+2to3-3.8          pasteurize     python3                rst2xetex.py
+chardetect        pbr            python3.8              rst2xml.py
+cygdb             pip            python3.8-config       rstpep2html.py
+cython            pip3           python3-config         runxlrd.py
+cythonize         pip3.8         rst2html4.py           sphinx-apidoc
+easy_install      pybabel        rst2html5.py           sphinx-autogen
+easy_install-3.8  __pycache__    rst2html.py            sphinx-build
+futurize          pydoc3         rst2latex.py           sphinx-quickstart
+idle3             pydoc3.8       rst2man.py             tabulate
+idle3.8           pygmentize     rst2odt_prepstyles.py  virtualenv
+netaddr           pytest         rst2odt.py             wheel
+nosetests         py.test        rst2pseudoxml.py
+```
+{: .output}
 
 Taking this to its conclusion, `module load` will add software to your `$PATH`.
 It "loads" software. A special note on this - depending on which version of the
 `module` program that is installed at your site, `module load` will also load
 required software dependencies.
 
-{% include {{ site.snippets }}/modules/software-dependencies.snip %}
+To demonstrate, let's use `module list`. `module list` shows all loaded
+software modules.
+
+```
+{{ site.remote.prompt }} module list
+```
+{: .language-bash}
+
+```
+Currently Loaded Modules:
+  1) GCCcore/x.y.z                 4) GMP/6.2.0-GCCcore-x.y.z
+  2) Tcl/8.6.10-GCCcore-x.y.z      5) libffi/3.3-GCCcore-x.y.z
+  3) SQLite/3.31.1-GCCcore-x.y.z   6) Python/3.x.y-GCCcore-x.y.z
+```
+{: .output}
+
+```
+{{ site.remote.prompt }} module load GROMACS
+{{ site.remote.prompt }} module list
+```
+{: .language-bash}
+
+```
+Currently Loaded Modules:
+  1) GCCcore/x.y.z                    14) libfabric/1.11.0-GCCcore-x.y.z
+  2) Tcl/8.6.10-GCCcore-x.y.z         15) PMIx/3.1.5-GCCcore-x.y.z
+  3) SQLite/3.31.1-GCCcore-x.y.z      16) OpenMPI/4.0.3-GCC-x.y.z
+  4) GMP/6.2.0-GCCcore-x.y.z          17) OpenBLAS/0.3.9-GCC-x.y.z
+  5) libffi/3.3-GCCcore-x.y.z         18) gompi/2020a
+  6) Python/3.x.y-GCCcore-x.y.z       19) FFTW/3.3.8-gompi-2020a
+  7) GCC/x.y.z                        20) ScaLAPACK/2.1.0-gompi-2020a
+  8) numactl/2.0.13-GCCcore-x.y.z     21) foss/2020a
+  9) libxml2/2.9.10-GCCcore-x.y.z     22) pybind11/2.4.3-GCCcore-x.y.z-Pytho...
+ 10) libpciaccess/0.16-GCCcore-x.y.z  23) SciPy-bundle/2020.03-foss-2020a-Py...
+ 11) hwloc/2.2.0-GCCcore-x.y.z        24) networkx/2.4-foss-2020a-Python-3.8...
+ 12) libevent/2.1.11-GCCcore-x.y.z    25) GROMACS/2020.1-foss-2020a-Python-3...
+ 13) UCX/1.8.0-GCCcore-x.y.z
+```
+{: .output}
+
+So in this case, loading the `GROMACS` module (a bioinformatics software
+package), also loaded `GMP/6.2.0-GCCcore-x.y.z` and
+`SciPy-bundle/2020.03-foss-2020a-Python-3.x.y` as well. Let's try unloading the
+`GROMACS` package.
+
+```
+{{ site.remote.prompt }} module unload GROMACS
+{{ site.remote.prompt }} module list
+```
+{: .language-bash}
+
+```
+Currently Loaded Modules:
+  1) GCCcore/x.y.z                    13) UCX/1.8.0-GCCcore-x.y.z
+  2) Tcl/8.6.10-GCCcore-x.y.z         14) libfabric/1.11.0-GCCcore-x.y.z
+  3) SQLite/3.31.1-GCCcore-x.y.z      15) PMIx/3.1.5-GCCcore-x.y.z
+  4) GMP/6.2.0-GCCcore-x.y.z          16) OpenMPI/4.0.3-GCC-x.y.z
+  5) libffi/3.3-GCCcore-x.y.z         17) OpenBLAS/0.3.9-GCC-x.y.z
+  6) Python/3.x.y-GCCcore-x.y.z       18) gompi/2020a
+  7) GCC/x.y.z                        19) FFTW/3.3.8-gompi-2020a
+  8) numactl/2.0.13-GCCcore-x.y.z     20) ScaLAPACK/2.1.0-gompi-2020a
+  9) libxml2/2.9.10-GCCcore-x.y.z     21) foss/2020a
+ 10) libpciaccess/0.16-GCCcore-x.y.z  22) pybind11/2.4.3-GCCcore-x.y.z-Pytho...
+ 11) hwloc/2.2.0-GCCcore-x.y.z        23) SciPy-bundle/2020.03-foss-2020a-Py...
+ 12) libevent/2.1.11-GCCcore-x.y.z    24) networkx/2.4-foss-2020a-Python-3.x.y
+```
+{: .output}
+
+So using `module unload` "un-loads" a module, and depending on how a site is
+ configured it may also unload all of the dependencies (in our case it does
+ not). If we wanted to unload everything at once, we could run `module purge`
+ (unloads everything).
+
+```
+{{ site.remote.prompt }} module purge
+{{ site.remote.prompt }} module list
+```
+{: .language-bash}
+
+```
+No modules loaded
+```
+{: .output}
+
+Note that `module purge` is informative. It will also let us know if a default
+set of "sticky" packages cannot be unloaded (and how to actually unload these
+if we truly so desired).
 
 Note that this module loading process happens principally through
 the manipulation of environment variables like `$PATH`. There
@@ -174,9 +343,27 @@ Let's examine the output of `module avail` more closely.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/modules/available-modules.snip %}
+```
+~~~ /cvmfs/pilot.eessi-hpc.org/2020.12/software/x86_64/amd/zen2/modules/all ~~~
+  Bazel/3.6.0-GCCcore-x.y.z              NSS/3.51-GCCcore-x.y.z
+  Bison/3.5.3-GCCcore-x.y.z              Ninja/1.10.0-GCCcore-x.y.z
+  Boost/1.72.0-gompi-2020a               OSU-Micro-Benchmarks/5.6.3-gompi-2020a
+  CGAL/4.14.3-gompi-2020a-Python-3.x.y   OpenBLAS/0.3.9-GCC-x.y.z
+  CMake/3.16.4-GCCcore-x.y.z             OpenFOAM/v2006-foss-2020a
 
-{% include {{ site.snippets }}/modules/wrong-gcc-version.snip %}
+[removed most of the output here for clarity]
+
+  Where:
+   L:        Module is loaded
+   Aliases:  Aliases exist: foo/1.2.3 (1.2) means that "module load foo/1.2"
+             will load foo/1.2.3
+   D:        Default Module
+
+Use "module spider" to find all possible modules and extensions.
+Use "module keyword key1 key2 ..." to search for all possible modules matching
+any of the "keys".
+```
+{: .output}
 
 > ## Using Software Modules in Scripts
 >

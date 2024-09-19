@@ -108,7 +108,10 @@ available to perform the work.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/basic-job-script.snip %}
+```
+Submitted batch job 9
+```
+{: .output}
 
 And that's all we need to do to submit a job. Our work is done -- now the
 scheduler takes over and tries to run the job for us. While the job is waiting
@@ -121,7 +124,15 @@ status, we check the queue using the command
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/basic-job-status.snip %}
+```
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+    9 cpubase_b example-   user01  R       0:05      1 node1
+```
+{: .output}
+
+We can see all the details of our job, most importantly that it is in the `R`
+or `RUNNING` state. Sometimes our jobs might need to wait in a queue
+(`PENDING`) or have an error (`E`).
 
 > ## Where's the Output?
 >
@@ -177,7 +188,11 @@ Submit the job and monitor its status:
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/job-with-name-status.snip %}
+```
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+   10 cpubase_b hello-wo   user01  R       0:02      1 node1
+```
+{: .output}
 
 Fantastic, we've successfully changed the name of our job!
 
@@ -192,7 +207,21 @@ with your site's default resources, which is probably not what you want.
 
 The following are several key resource requests:
 
-{% include {{ site.snippets }}/scheduler/option-flags-list.snip %}
+* `--ntasks=<ntasks>` or `-n <ntasks>`: How many CPU cores does your job need,
+  in total?
+
+* `--time <days-hours:minutes:seconds>` or `-t <days-hours:minutes:seconds>`:
+  How much real-world time (walltime) will your job take to run? The `<days>`
+  part can be omitted.
+
+* `--mem=<megabytes>`: How much memory on a node does your job need in
+  megabytes? You can also specify gigabytes using by adding a little "g"
+  afterwards (example: `--mem=5g`)
+
+* `--nodes=<nnodes>` or `-N <nnodes>`: How many separate machines does your job
+  need to run on? Note that if you set `ntasks` to a number greater than what
+  one machine can offer, {{ site.sched.name }} will set this value
+  automatically.
 
 Note that just _requesting_ these resources does not make your job run faster,
 nor does it necessarily mean that you will consume all of these resources. It
@@ -264,9 +293,17 @@ log file.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/runtime-exceeded-job.snip %}
+```
+{{ site.remote.prompt }} cat slurm-12.out
+```
+{: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/runtime-exceeded-output.snip %}
+```
+This script is running on ...
+slurmstepd: error: *** JOB 12 ON node1 CANCELLED AT 2021-02-19T13:55:57
+DUE TO TIME LIMIT ***
+```
+{: .output}
 
 Our job was killed for exceeding the amount of resources it requested. Although
 this appears harsh, this is actually a feature. Strict adherence to resource
@@ -292,7 +329,13 @@ you to cancel it before it is killed!).
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/terminate-job-begin.snip %}
+```
+Submitted batch job 13
+
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+   13 cpubase_b long_job   user01  R       0:02      1 node1
+```
+{: .output}
 
 Now cancel the job with its job number (printed in your terminal). A clean
 return of your command prompt indicates that the request to cancel the job was
@@ -305,9 +348,38 @@ successful.
 ```
 {: .language-bash}
 
-{% include {{ site.snippets }}/scheduler/terminate-job-cancel.snip %}
+```
+JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+```
+{: .output}
 
-{% include {{ site.snippets }}/scheduler/terminate-multiple-jobs.snip %}
+> ## Cancelling multiple jobs
+>
+> We can also cancel all of our jobs at once using the `-u` option. This will
+> delete all jobs for a specific user (in this case, yourself). Note that you
+> can only delete your own jobs.
+>
+> Try submitting multiple jobs and then cancelling them all.
+>
+> > ## Solution
+> >
+> > First, submit a trio of jobs:
+> >
+> > ```
+> > {{ site.remote.prompt }} {{ site.sched.submit.name }} {% if site.sched.submit.options != '' %}{{ site.sched.submit.options }} {% endif %}example-job.sh
+> > {{ site.remote.prompt }} {{ site.sched.submit.name }} {% if site.sched.submit.options != '' %}{{ site.sched.submit.options }} {% endif %}example-job.sh
+> > {{ site.remote.prompt }} {{ site.sched.submit.name }} {% if site.sched.submit.options != '' %}{{ site.sched.submit.options }} {% endif %}example-job.sh
+> > ```
+> > {: .language-bash}
+> >
+> > Then, cancel them all:
+> >
+> > ```
+> > {{ site.remote.prompt }} {{ site.sched.del }} -u {{ site.remote.user }}
+> > ```
+> > {: .language-bash}
+> {: .solution}
+{: .challenge}
 
 ## Other Types of Jobs
 
@@ -320,7 +392,75 @@ too much for a login node to handle. A good example of this might be building a
 genome index for alignment with a tool like [HISAT2][hisat]. Fortunately, we
 can run these types of tasks as a one-off with `{{ site.sched.interactive }}`.
 
-{% include {{ site.snippets }}/scheduler/using-nodes-interactively.snip %}
+`{{ site.sched.interactive }}` runs a single command on the cluster and then
+exits. Let's demonstrate this by running the `hostname` command with
+`{{ site.sched.interactive }}`. (We can cancel an `{{ site.sched.interactive }}`
+job with `Ctrl-c`.)
+
+```
+{{ site.remote.prompt }} {{ site.sched.interactive }} hostname
+```
+{: .language-bash}
+
+```
+{{ site.remote.node }}
+```
+{: .output}
+
+`{{ site.sched.interactive }}` accepts all of the same options as
+`{{ site.sched.submit.name }}`. However, instead of specifying these in a script,
+these options are specified on the command-line when starting a job. To submit
+a job that uses 2 CPUs for instance, we could use the following command:
+
+```
+{{ site.remote.prompt }} {{ site.sched.interactive }} -n 2 echo "This job will use 2 CPUs."
+```
+{: .language-bash}
+
+```
+This job will use 2 CPUs.
+This job will use 2 CPUs.
+```
+{: .output}
+
+Typically, the resulting shell environment will be the same as that for
+`{{ site.sched.submit.name }}`.
+
+### Interactive jobs
+
+Sometimes, you will need a lot of resources for interactive use. Perhaps it's
+our first time running an analysis or we are attempting to debug something that
+went wrong with a previous job. Fortunately, {{ site.sched.name }} makes it
+easy to start an interactive job with `{{ site.sched.interactive }}`:
+
+```
+{{ site.remote.prompt }} {{ site.sched.interactive }} --pty bash
+```
+{: .language-bash}
+
+You should be presented with a bash prompt. Note that the prompt will likely
+change to reflect your new location, in this case the compute node we are
+logged on. You can also verify this with `hostname`.
+
+> ## Creating remote graphics
+>
+> To see graphical output inside your jobs, you need to use X11 forwarding. To
+> connect with this feature enabled, use the `-Y` option when you login with
+> the `ssh` command, e.g., `ssh -Y {{ site.remote.user }}@{{ site.remote.login }}`.
+>
+> To demonstrate what happens when you create a graphics window on the remote
+> node, use the `xeyes` command. A relatively adorable pair of eyes should pop
+> up (press `Ctrl-C` to stop). If you are using a Mac, you must have installed
+> XQuartz (and restarted your computer) for this to work.
+>
+> If your cluster has the
+> [slurm-spank-x11](https://github.com/hautreux/slurm-spank-x11) plugin
+> installed, you can ensure X11 forwarding within interactive jobs by using the
+> `--x11` option for `{{ site.sched.interactive }}` with the command
+> `{{ site.sched.interactive }} --x11 --pty bash`.
+{: .callout}
+
+When you are done with the interactive job, type `exit` to quit your session.
 
 {% include links.md %}
 
