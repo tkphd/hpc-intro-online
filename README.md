@@ -138,7 +138,7 @@ them.
 high-performance computing from an academic and/or commercial background are
 provided to help guide planning and decision-making.
 
-1. [Why use a cluster?](_episodes/11-hpc-intro.md) (20 minutes)
+1. [Why use a cluster?](_episodes/10-hpc-intro.md) (20 minutes)
 
    * Brief, concentrate on the concepts not details like interconnect type, etc.
    * Be able to describe what a compute cluster (HPC/HTC system) is
@@ -169,7 +169,7 @@ provided to help guide planning and decision-making.
    * Remove? `watch`
    * Later lessons? `-N` `-n` `-c`
 
-1. [Accessing software via Modules](_episodes/14-modules.md) (45 minutes)
+1. [Accessing software via Modules](_episodes/15-modules.md) (45 minutes)
 
    * Understand the runtime environment at login
    * Learn how software modules can modify your environment
@@ -182,7 +182,7 @@ provided to help guide planning and decision-making.
    * Extras: `.bashrc`, `.bash_profile`
 
 1. [Transferring files with remote computers](
-   _episodes/15-transferring-files.md) (30 minutes)
+   _episodes/16-transferring-files.md) (30 minutes)
 
    * Understand the (cognitive) limitations that remote systems don't
      necessarily have local Finder/Explorer windows
@@ -196,7 +196,7 @@ provided to help guide planning and decision-making.
    * Bonus: `gzip`, `tar`, `dos2unix`, `cat`, `unix2dos`, `sftp`, `pwd`,
      `lpwd`, `put`, `get`
 
-1. [Running a parallel job](_episodes/16-parallel.md) (1 hour)
+1. [Running a parallel job](_episodes/17-parallel.md) (1 hour)
 
    * Introduce message passing and MPI as the fundamental engine of parallel
      software
@@ -205,7 +205,7 @@ provided to help guide planning and decision-making.
    * Write job submission scripts & run the job on a cluster node
    * Tools: `nano`, `sbatch`, `squeue`
 
-1. [Using resources effectively](_episodes/17-resources.md) (40 minutes)
+1. [Using resources effectively](_episodes/18-resources.md) (40 minutes)
 
    * Understand how to look up job statistics
    * Learn how to use job statistics to understand the health of your jobs
@@ -214,7 +214,7 @@ provided to help guide planning and decision-making.
    * Tools: `fastqc`, `sacct`, `ssh`, `top`, `free`, `ps`, `kill`, `killall`
      (note that some of these may not be appropriate on shared systems)
 
-1. [Using shared resources responsibly](_episodes/18-responsibility.md) (20
+1. [Using shared resources responsibly](_episodes/19-responsibility.md) (20
    minutes)
 
    * Discuss the ways some activities can affect everyone else on the system
